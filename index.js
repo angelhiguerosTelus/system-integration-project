@@ -24,8 +24,8 @@ app.set("view engine", "ejs");
 
 // Aplication
 app.get("/", (req, res) => {
-  let response = getTodos();
-  res.render("index", { todos: response.data });
+  // let response = getTodos();
+  res.render("index");
 });
 
 // Enpoints
@@ -35,31 +35,32 @@ app.get("/todos", (req, res) => {
   res.send(response);
 });
 
-app.post("/", (req, res) => {
+
+app.post("/todos", (req, res) => {
   let { description } = req.body;
-  addTodo(description);
-  let response = getTodos();
-  res.render("index", { todos: response.data });
+  let newTodo = addTodo(description);
+  res.send(newTodo);
 });
 
-app.put("/", (req, res) => {
+app.put("/todos", (req, res) => {
   let { _uid, description, state } = req.body;
   updateTodo(_uid, description, state);
+
   let response = getTodos();
-  res.render("index", { todos: response.data });
-});
-
-app.put("/:_uid/:description/:state", (req, res) => {
-  let { _uid, description, state } = req.params;
-  let response = updateTodo(_uid, description, state);
   res.send(response);
 });
 
-app.delete("/:_uid", (req, res) => {
-  let { _uid } = req.params;
-  let response = removeTodo(_uid);
+
+app.delete("/todos", (req, res) => {
+  let { _uid } = req.body;
+  removeTodo(_uid);
+
+  let response = getTodos();
   res.send(response);
 });
+
+
+
 
 // Starting server.
 
