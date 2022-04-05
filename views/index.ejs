@@ -1,0 +1,137 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DSU Todo - Angel Higueros</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="level has-background-primary-dark p-5">
+        <div class="level-item">
+          <span class="title is-2 has-text-white-ter">DSU TODO</span>
+        </div>
+      </div>
+
+      <div style="height: 75%; overflow: auto">
+        <div class="level p-5">
+          <div class="level-item">
+            <table class="table is-fullwidth">
+              <thead>
+                <tr>
+                  <th style="width: 10%"></th>
+                  <th style="width: 80%"></th>
+                  <th style="width: 5%"></th>
+                  <th style="width: 5%"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% todos.map((cardContent, index) => { %>
+
+                <tr>
+                  <td>
+                    <input
+                      <% if(cardContent.state) { %>
+                        checked
+                        <% } %>
+                      onchange="handleStatus('<%= cardContent._uid %>', '<%= cardContent.description %>', '<%= cardContent.state %>');"
+                      type="checkbox"
+                    />
+                  </td>
+                  <td>
+                    <span <% if(cardContent.state) { %>
+                      style="text-decoration: line-through;" <% } %> > 
+                      <%= cardContent.description %>
+                    </span>
+                  </td>
+                  <td><i  onclick="updateTodo('<%= cardContent._uid %>', '<%= cardContent.description %>', '<%= cardContent.state %>')" class="bi bi-pencil"></i></td>
+                  <td>
+                    <i
+                      onclick="removeTodo('<%= cardContent._uid %>' )"
+                      class="bi bi-trash"
+                    ></i>
+                  </td>
+                </tr>
+
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="level has-background-primary-dark p-5">
+        <form action="/" method="post" style="width: 100%" id="form">
+          <div class="level-item">
+            <input name="description" id="description" required class="input" type="text" />
+            <input name="_uid" id="_uid" required class="input" type="hidden" />
+            <input name="state" id="state" required class="input" type="hidden" />
+            <button id="btnSave" type="submit" class="button is-success">ADD</button>
+            <button id="btnUpdate" type="submit" class="button is-success is-hidden">UPDATE</button>
+
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const handleStatus = async (_uid, description, state) => {
+        let data = await fetch(`/${_uid}/${description}/${!JSON.parse(state)}`, {
+          method: "put",
+        });
+
+        if (data.error !== "") {
+          window.location.href = "";
+        } else {
+          alert("Error was ocurred");
+        }
+      };
+
+
+
+      const updateTodo = async (_uid, description, state) => {
+        let input = document.querySelector('#description')
+        input.value = description
+
+        let form = document.querySelector('#form')
+
+        form.removeAttribute('action')
+        form.setAttribute('action', '/update')
+
+        let btnSave = document.querySelector('#btnSave')
+        let btnUpdate = document.querySelector('#btnUpdate')
+        
+        btnSave.classList.add('is-hidden')
+        btnUpdate.classList.remove('is-hidden')
+
+
+        let uidInput = document.querySelector('#_uid')
+        let stateInput = document.querySelector('#state')
+
+        uidInput.value = _uid
+        stateInput.value = state
+      };
+
+
+      const removeTodo = async (_uid) => {
+        let data = await fetch(`/${_uid}`, {
+          method: "delete",
+        });
+
+        if (data.error !== "") {
+          window.location.href = "";
+        } else {
+          alert("Error was ocurred");
+        }
+      };
+    </script>
+  </body>
+</html>
