@@ -52,7 +52,7 @@
                       <%= cardContent.description %>
                     </span>
                   </td>
-                  <td><i  onclick="updateTodo('<%= cardContent._uid %>', '<%= cardContent.description %>', '<%= cardContent.state %>')" class="bi bi-pencil"></i></td>
+                  <td><i  onclick="handleUpdate('<%= cardContent._uid %>', '<%= cardContent.description %>', '<%= cardContent.state %>')" class="bi bi-pencil"></i></td>
                   <td>
                     <i
                       onclick="removeTodo('<%= cardContent._uid %>' )"
@@ -75,8 +75,8 @@
             <input name="_uid" id="_uid" required class="input" type="hidden" />
             <input name="state" id="state" required class="input" type="hidden" />
             <button id="btnSave" type="submit" class="button is-success">ADD</button>
-            <button id="btnUpdate" type="submit" class="button is-success is-hidden">UPDATE</button>
 
+            <button id="btnUpdate" onclick="updateTodo()" type="button" class="button is-success is-hidden">UPDATE</button>
           </div>
         </form>
       </div>
@@ -97,14 +97,14 @@
 
 
 
-      const updateTodo = async (_uid, description, state) => {
+      const handleUpdate = async (_uid, description, state) => {
         let input = document.querySelector('#description')
         input.value = description
 
-        let form = document.querySelector('#form')
+        // let form = document.querySelector('#form')
 
-        form.removeAttribute('action')
-        form.setAttribute('action', '/update')
+        // form.removeAttribute('action')
+        // form.setAttribute('action', '/update')
 
         let btnSave = document.querySelector('#btnSave')
         let btnUpdate = document.querySelector('#btnUpdate')
@@ -118,7 +118,28 @@
 
         uidInput.value = _uid
         stateInput.value = state
+
+
+        
       };
+
+
+      const updateTodo = async() => {
+
+        let input = document.querySelector('#description')
+        let uidInput = document.querySelector('#_uid')
+        let stateInput = document.querySelector('#state')
+
+        let data = await fetch(`/${uidInput.value}/${input.value}/${JSON.parse(stateInput.value)}`, {
+          method: "put",
+        });
+
+        if (data.error !== "") {
+          window.location.href = "";
+        } else {
+          alert("Error was ocurred");
+        }
+      }
 
 
       const removeTodo = async (_uid) => {

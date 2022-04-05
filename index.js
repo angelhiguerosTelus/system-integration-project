@@ -42,7 +42,7 @@ app.post("/", (req, res) => {
   res.render("index", { todos: response.data });
 });
 
-app.post("/update", (req, res) => {
+app.put("/", (req, res) => {
   let { _uid, description, state } = req.body;
   updateTodo(_uid, description, state);
   let response = getTodos();
